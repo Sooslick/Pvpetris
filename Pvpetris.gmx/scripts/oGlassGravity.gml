@@ -28,7 +28,6 @@ if free {
     }
   }
 else {
-  pp+= dropped + level
   //samy pizdaty debug-costyl ever чтобы не было индехоф боундс ехептиона
   var costyl = -1
   for (var i=0; i<4; i++)
@@ -79,6 +78,11 @@ else {
           burnList[i+1] = ext
           }
     }
+  //recalc control before burn  
+  if (lines + ttrlines + pp != control)
+    game_end()
+  //count pointes for dropped tiles
+  pp+= dropped + level
   //burn lines
   if burn > 0 {
     lines+= burn
@@ -101,6 +105,9 @@ else {
     }
   softdrop = false
   dropped = 0
+  //recalc control
+  control = lines + ttrlines + pp
+  //send events
   if adapter != -1 {
     buffer_seek(global.buffer, buffer_seek_start, 0);
     buffer_write(global.buffer, buffer_s8, 15)

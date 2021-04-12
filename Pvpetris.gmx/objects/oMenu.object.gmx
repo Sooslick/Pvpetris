@@ -25,10 +25,7 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>global.domain = 'http://sooslick.itpony.ru/'
-global.version = 'PvPetris v0.1.5.1# © Sooslick Art Project'
-global.vlong = 336
-randomize()
+            <string>initGlobal()
 osinfo = os_get_info()
 
 ip = "127.0.0.1"
@@ -36,7 +33,6 @@ port = "27015"
 enabled = false
 connected = false
 connectTimeout = 0
-//nickname = "Guy"
 nickname = envGetNickname()
 level = "0"
 seed = ""

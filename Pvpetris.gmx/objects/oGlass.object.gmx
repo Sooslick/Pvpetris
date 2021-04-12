@@ -33,9 +33,9 @@ if global.adapter
   
 /* config */
 level = real(global.level)
-if level &lt; 0 || level &gt; 30
+if level &lt; 0 || level &gt; 19
   level = 0
-period = 1000 / (level + 1)
+period = 1000 / (level + 1)         //time delay between game ticks
 if global.seed != "" {
   random_set_seed(real(global.seed))
   }
@@ -48,12 +48,11 @@ firstFigureTrigger = true   //don't send first figure socket
 allowedFigures = "ISZOTLJ"  //
 sequenceLength = 999        //pre-generated sequence length
 sequence = ""               //main
-nextSequence = ""           //next sequence when first kon4itsa
+nextSequence = ""           //next sequence for unique cases when number 1000 will be too small
 for (i=0; i&lt;sequenceLength; i++) {
   sequence+= string_char_at(allowedFigures, irandom(string_length(allowedFigures)))
   nextSequence+= string_char_at(allowedFigures, irandom(string_length(allowedFigures)))
   }
-//level = 0                   //game speed
 sequencePosition = 0        //current figure from seq
 lines = 0
 ttrlines = 0                //lines burned by ttr
@@ -62,7 +61,7 @@ dry = 0                     //I figure drough
 maxdry = 0
 pp = 0                      //ppoints
 ts = current_time           //timestamp
-//period = 1000               //game speed - time delay between gravity ticks
+control = 0                 //control point = lines + ttrlines + pp
 delay = 2000            //current delay
 
 for (var i=0; i&lt;20; i++)    //glass states (0 nothing, other color)
@@ -143,7 +142,7 @@ if gameover {
     gameoverAlpha-= 0.005
   memetimer++
   if memetimer == 2500
-    http_get(global.domain+'wl/getSplash.php?r=PvPetris')
+    http_get(global.domain+global.restSplash)
   exit
   }
 if lineanim {
@@ -364,77 +363,6 @@ if gameover {
     draw_text_transformed(448,500,memestring,0.6,0.6,0)
     }
   }
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="9" enumb="114">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>exit
-//debug
-var s = "";
-var clip = "encode" + chr(13)
-//encode
-for (var i=0; i&lt;20; i++)
-  for (var j=0; j&lt;10; j++) {
-    var cl = arr[i,j];
-    if cl == 0
-      continue
-    var r = (cl div 65536 div 32) &lt;&lt; 5;
-    var g = (cl mod 65536 div 256 div 64) &lt;&lt; 3;
-    var b = cl mod 256 div 32;
-    var clb = r | g | b;
-    clip+= string(i) + " "
-    clip+= string(j) + " "
-    clip+= string(cl) + " "
-    clip+= string(r) + " "
-    clip+= string(g) + " "
-    clip+= string(b) + " "
-    clip+= string(clb) + chr(13)
-    s+= chr(i)
-    s+= chr(j)
-    s+= chr(clb)
-    }
-clip+= chr(13) + "decode" + chr(13)
-//decode
-var i;
-var j;
-var clb;
-var r;
-var g;
-var b;
-for (var a = 1; a&lt;= string_length(s); a+=3) {
-  i = ord(string_char_at(s, a))
-  j = ord(string_char_at(s, a+1))
-  clb = ord(string_char_at(s, a+2))
-  r = ((clb &gt;&gt; 5) &amp; $07) * 32
-  g = ((clb &gt;&gt; 3) &amp; $03) * 64
-  b = (clb &amp; $07) * 32
-  clip+= string(i) + " "
-  clip+= string(j) + " "
-  clip+= string(clb) + " "
-  clip+= string(r) + " "
-  clip+= string(g) + " "
-  clip+= string(b) + " "
-  clip+= string(make_color_rgb(r,g,b)) + chr(13)
-  }
-clipboard_set_text(clip)
 </string>
           </argument>
         </arguments>
