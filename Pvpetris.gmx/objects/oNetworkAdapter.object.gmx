@@ -315,6 +315,7 @@ if type = network_type_data {
   }
 else if type = network_type_disconnect {
   gameover = true
+  global.adapter = false
   }
 </string>
           </argument>

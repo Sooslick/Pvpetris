@@ -121,21 +121,40 @@ oAdapterInit(adapter)
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if keyboard_check_released(vk_escape) || gamepad_button_check_released(0, gp_start) {
+            <string>if keyboard_check_released(vk_space) || gamepad_button_check_released(0, gp_start) {
   if gameover {
     if adapter == -1 {
       global.seed = string(random_get_seed() + 1)
-      room_restart()
+      show_debug_message("after restart cleanup")
+      instance_destroy()
+      instance_create(0, 0, oGlass)
       }
     else if adapter.gameover {
       global.seed = string(random_get_seed() + 1)
       buffer_seek(global.buffer, buffer_seek_start, 0);
       buffer_write(global.buffer, buffer_s8, 19)
       network_send_packet( global.botnet, global.buffer, buffer_tell(global.buffer) );
-      room_restart()
+      show_debug_message("after restart cleanup")
+      instance_destroy()
+      instance_destroy(adapter)
+      instance_create(0, 0, oGlass)
       }
     }
   }
+  
+if keyboard_check_released(vk_escape) || gamepad_button_check_released(0, gp_select) {
+  if gameover {
+    show_debug_message("quit cleanup")
+    instance_destroy()
+    instance_destroy(adapter)
+    instance_destroy(oAlmiManager)
+    instance_destroy(oAlmi)
+    if (global.adapter)      network_destroy(global.botnet)
+    if (global.server != -1) network_destroy(global.server)
+    if (global.client != -1) network_destroy(global.client)
+    game_restart()
+  }
+}
   
 if gameover {
   if gameoverAlpha &gt; 0.25
@@ -351,10 +370,8 @@ if gameover {
   draw_set_alpha((0.5-gameoverAlpha)*4)
   draw_set_halign(fa_center)
   draw_text(448,200,"Game over")
-  if adapter == -1
-    draw_text(448,280,"Press Esc#to restart")
-  else if adapter.gameover
-    draw_text(448,280,"Press Esc#to restart")
+  if adapter == -1 || adapter.gameover
+    draw_text(448,280,"Press Space#to restart")
   else
     draw_text(448,280,"Wait for player#" + global.plright)
   if memestring != "" {

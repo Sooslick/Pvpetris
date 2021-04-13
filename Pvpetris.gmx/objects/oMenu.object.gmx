@@ -95,11 +95,10 @@ else if keyboard_check_pressed(vk_up) {
 else if keyboard_check_pressed(vk_enter) || gamepad_button_check_pressed(0, gp_start) {
   if selected == 0 {
     if !connected {
-      if !clientConnected
-        enabled = false
       if seed == ""
         seed = string(irandom(2147483647))
-      if enabled {
+      if clientConnected {
+        global.adapter = true
         buffer_seek(global.buffer, buffer_seek_start, 0);
         buffer_write(global.buffer, buffer_s8, 2)
         buffer_write(global.buffer, buffer_string, level)
@@ -107,14 +106,21 @@ else if keyboard_check_pressed(vk_enter) || gamepad_button_check_pressed(0, gp_s
         buffer_write(global.buffer, buffer_string, nickname)
         network_send_packet( global.sock, global.buffer, buffer_tell(global.buffer) );
         }
-      global.adapter = enabled || connected
+      else if enabled {
+        global.adapter = false
+        network_destroy(global.server)
+        global.server = -1
+        show_debug_message("stopped server")
+      }
       global.level = level
       global.seed = seed
       if global.adapter
         global.botnet = global.sock
+      //todo else destroy socket
       global.plleft = nickname
       global.plright = client_name
       room_goto(room0)
+      instance_destroy()
       }
     }
   else if selected == 4 {
@@ -126,8 +132,7 @@ else if keyboard_check_pressed(vk_enter) || gamepad_button_check_pressed(0, gp_s
     }
   else if selected == 6 {
     if !enabled &amp;&amp; !connected &amp;&amp; connectTimeout&lt;=0 {
-      //connected = true
-      connectTimeout = 153
+      connectTimeout = 153      //five seconds + 3 extra ticks
       network_set_config(network_config_connect_timeout, 5000)
       network_set_config(network_config_use_non_blocking_socket, 1);
       global.client = network_create_socket(network_socket_tcp);
@@ -218,6 +223,11 @@ else {
 keyboard_lastchar = ''
 
 connectTimeout--
+if (connectTimeout == 0 &amp;&amp; !connected) {
+  network_destroy(global.client)
+  global.client = -1
+  show_debug_message("destroyed client")
+}
 </string>
           </argument>
         </arguments>
@@ -250,28 +260,30 @@ msg_buff = ds_map_find_value(async_load, "buffer");
 if type = network_type_data {
   var header = buffer_read(msg_buff, buffer_s8)
   switch header {
-    case 0:
+    case 0:     //init data packet from client
       client_name = buffer_read(msg_buff, buffer_string)
       var size = buffer_get_size(msg_buff)
       var vl = 0
       if size &gt;= string_length(client_name) + 6
         vl = buffer_read(msg_buff, buffer_u32)
       buffer_seek(global.buffer, buffer_seek_start, 0);
-      if vl &gt;= 336 {                                      //todo - global.min aloowed
+      if vl &gt;= global.vlongMinAllowed {
+        //accept packet
         buffer_write(global.buffer, buffer_s8, 1)
         buffer_write(global.buffer, buffer_string, nickname)
         }
       else {
+        //decline packet
         client_name = ""
         clientConnected = false
         buffer_write(global.buffer, buffer_s8, 3)
         }
       network_send_packet( eid, global.buffer, buffer_tell(global.buffer) );
       break
-    case 1:
+    case 1:    //init packet from server
       client_name = buffer_read(msg_buff, buffer_string)
       break
-    case 2:
+    case 2:    //procceed to the game
       global.level = buffer_read(msg_buff, buffer_string)
       global.seed = buffer_read(msg_buff, buffer_string)
       global.adapter = true
@@ -283,8 +295,9 @@ if type = network_type_data {
       buffer_write(global.buffer, buffer_string, nickname)
       network_send_packet( eid, global.buffer, buffer_tell(global.buffer) );
       room_goto(room0)
+      instance_destroy()
       break
-    case 3:
+    case 3:    //error packet from server
       connected = false
       vError = true
       break
@@ -302,6 +315,7 @@ else if type = network_type_disconnect {
   
 else if type = network_type_non_blocking_connect {
   if succeeded {
+    //send init data packet after connection to server
     connected = true
     buffer_seek(global.buffer, buffer_seek_start, 0);
     buffer_write(global.buffer, buffer_s8, 0)
@@ -345,9 +359,10 @@ draw_text_transformed(0,720,global.version,0.4,0.4,0)
 draw_set_halign(fa_right)
 draw_text(1280,720,'Game controls:
 Z/X - rotate
-Arrow left/right - shift
-Arrow down - drop
-Esc - restart game')
+Left/right - shift
+Down - drop
+Space - restart game
+Esc - quit to menu')
 
 draw_set_valign(fa_top)
 
