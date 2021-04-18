@@ -28,29 +28,55 @@
             <string>initGlobal()
 osinfo = os_get_info()
 
+//general
+nickname = envGetNickname()
+level = "0"
+seed = ""
+
+//mpl
 ip = "127.0.0.1"
 port = "27015"
 enabled = false
 connected = false
 connectTimeout = 0
-nickname = envGetNickname()
-level = "0"
-seed = ""
 client_name = ""
 clientConnected = false
 vError = false
 
+//ui
 selected = 0
+hovered = 0
+menuHost = false
+menuCli = false
+mousePos = mouse_x + mouse_y
 
+//draw
+sX1 = 0
+sX2 = 640
+sY1 = 0
+sY2 = 100
+hX1 = 0
+hX2 = 640
+hY1 = 0
+hY2 = 100
+drawName = nickname
+drawLevel = level
+drawSeed = seed
+drawIp = ip
+drawPort = port
+
+//ui elements IDs
 //0 = start
 //1 = nickname
 //2 = level
 //3 = seed
-//4 = host
-//5 = port
+//4 = enable host
+//5 = on port
 //6 = connect
-//7 = host
-//8 = port
+//7 = host ip
+//8 = with port
+//9 = open host menu
+//10 = open client menu
 </string>
           </argument>
         </arguments>
@@ -73,25 +99,98 @@ selected = 0
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if keyboard_check_pressed(vk_left) || keyboard_check_pressed(vk_right) {
-  if selected &lt; 6
-    selected = 7
-  else
-    selected = 1
+            <string>//UI switching by keyboard
+if keyboard_check_pressed(vk_left) {
+  switch selected {
+    case 0: case 1: 
+      selected = 10; 
+      break;
+    case 2:
+      if (menuCli) selected = 7
+      else if (menuHost) selected = 4
+      else selected = 10
+      break
+    case 3:
+      if (menuCli) selected = 6
+      else if (menuHost) selected = 5
+      else selected = 10
+      break
+    case 4: case 7:
+      selected = 2; 
+      break;
+    case 5: case 6: case 8:
+      selected = 3; 
+      break;
+    case 9:
+      selected = 1; 
+      break;
+    case 10:
+      selected = 9
+    }
+  hovered = selected
+  recalcBoundings(self)
   }
   
+if keyboard_check_pressed(vk_right) {
+  switch selected {
+    case 0: case 1: 
+      selected = 9; 
+      break;
+    case 2:
+      if (menuCli) selected = 7
+      else if (menuHost) selected = 4
+      else selected = 9
+      break
+    case 3:
+      if (menuCli) selected = 8
+      else if (menuHost) selected = 5
+      else selected = 9
+      break
+    case 4: case 7:
+      selected = 2; 
+      break;
+    case 5: case 6: case 8:
+      selected = 3; 
+      break;
+    case 9:
+      selected = 10; 
+      break;
+    case 10:
+      selected = 1
+    }
+  hovered = selected
+  recalcBoundings(self)
+  }  
+  
 else if keyboard_check_pressed(vk_down) {
-  selected++
-  if selected &gt; 8
-    selected = 0
+  switch selected {
+    case 0: case 1: case 2: case 4: case 7: selected++; break;
+    case 3: selected = 0; break;
+    case 5: selected = 9; break;
+    case 6: selected = 10; break;
+    case 8: selected = 6; break;
+    case 9: if menuHost selected = 4; break;
+    case 10: if menuCli selected = 7;
+    }
+  hovered = selected
+  recalcBoundings(self)
   }
   
 else if keyboard_check_pressed(vk_up) {
-  selected--
-  if selected &lt; 0
-    selected = 0
+  switch selected {
+    case 0: selected = 3; break;
+    case 1: case 2: case 3: case 5: case 8: selected--; break;
+    case 4: selected = 9; break;
+    case 6: selected = 8; break;
+    case 7: selected = 10; break;
+    case 9: if menuHost selected = 5; break;
+    case 10: if menuCli selected = 6;
+    }
+  hovered = selected
+  recalcBoundings(self)
   }
   
+//UI enter pressed (or mouse clicked)
 else if keyboard_check_pressed(vk_enter) || gamepad_button_check_pressed(0, gp_start) {
   if selected == 0 {
     if !connected {
@@ -140,9 +239,26 @@ else if keyboard_check_pressed(vk_enter) || gamepad_button_check_pressed(0, gp_s
       global.buffer = buffer_create(16, buffer_grow, 1);
       }
     }
+  else if selected == 9 {
+    connected = false
+    connectTimeout = 0
+    menuCli = false
+    menuHost = true
+    if (global.client != -1) network_destroy(global.client)
+    global.client = -1
+    }
+  else if selected == 10 {
+    enabled = false
+    clientConnected = false
+    menuCli = true
+    menuHost = false
+    if (global.server != -1) network_destroy(global.server)
+    global.server = -1
+    }
   keyboard_key_release(vk_enter)
   }
     
+//backspacing inputs
 else if keyboard_check_pressed(vk_backspace) {
   if selected == 1
     nickname = string_copy(nickname, 1, string_length(nickname)-1)
@@ -154,41 +270,51 @@ else if keyboard_check_pressed(vk_backspace) {
     port = string_copy(port, 1, string_length(port)-1)
   else if selected == 7
     ip = string_copy(ip, 1, string_length(ip)-1)
+  recalcStrings(self)
   }
   
+//paste ip
 else if keyboard_check(vk_control) &amp;&amp; keyboard_check_pressed(ord("V")) {
-  if selected == 7
-    if clipboard_has_text()
-      ip = clipboard_get_text()
+  if clipboard_has_text()
+    ip = clipboard_get_text()
+  recalcStrings(self)
   }  
   
+//mouse click: map clicked area, then procced as enter click
 else if mouse_check_button_pressed(mb_left) {
   if point_in_rectangle(mouse_x, mouse_y, 0,0,640,100) {
     selected = 0
     keyboard_key_press(vk_enter)
     }
-  else if point_in_rectangle(mouse_x, mouse_y, 0,120,640,180)
+  else if point_in_rectangle(mouse_x, mouse_y, 0,120,640,200)
     selected = 1
-  else if point_in_rectangle(mouse_x, mouse_y, 0,200,640,260)
+  else if point_in_rectangle(mouse_x, mouse_y, 0,200,640,280)
     selected = 2
-  else if point_in_rectangle(mouse_x, mouse_y, 0,280,640,340)
+  else if point_in_rectangle(mouse_x, mouse_y, 0,280,640,360)
     selected = 3
-  else if point_in_rectangle(mouse_x, mouse_y, 0,420,640,480) {
-    selected = 4
+  else if point_in_rectangle(mouse_x, mouse_y, 640,120,960,200) {
+    selected = 9
     keyboard_key_press(vk_enter)
     }
-  else if point_in_rectangle(mouse_x, mouse_y, 0,500,640,560)
-    selected = 5
-  else if point_in_rectangle(mouse_x, mouse_y, 640,0,1280,100) {
-    selected = 6
+  else if point_in_rectangle(mouse_x, mouse_y, 960,120,1280,200) {
+    selected = 10
     keyboard_key_press(vk_enter)
     }
-  else if point_in_rectangle(mouse_x, mouse_y, 640,120,1280,180)
-    selected = 7
-  else if point_in_rectangle(mouse_x, mouse_y, 640,200,1280,260)
-    selected = 8
+  else if point_in_rectangle(mouse_x, mouse_y, 640,200,1280,280) {
+    if menuHost { selected = 4; keyboard_key_press(vk_enter); }
+    else if menuCli selected = 7
+    }
+  else if point_in_rectangle(mouse_x, mouse_y, 640,280,1280,360) {
+    if menuHost selected = 5
+    else if menuCli selected = 8
+    }
+  else if point_in_rectangle(mouse_x, mouse_y, 640,360,1280,440)
+    if menuCli { selected = 6; keyboard_key_press(vk_enter); }
+  hovered = selected
+  recalcBoundings(self)
   }  
   
+//typing
 else {
   if selected == 1 {
     if string_length(nickname) &lt; 32 {
@@ -201,33 +327,66 @@ else {
   if selected == 2 {
     if (ord(keyboard_lastchar)&gt;47) &amp;&amp; (ord(keyboard_lastchar)&lt;58) {
       level+= keyboard_lastchar
-      if real(level) &gt; 30
-        level = "30"
+      if real(level) &gt; 19
+        level = "19"
       }
     }
   if selected == 3 {
     if (ord(keyboard_lastchar)&gt;47) &amp;&amp; (ord(keyboard_lastchar)&lt;58)
-      seed+= keyboard_lastchar
+      if string_length(seed) &lt; 10
+        seed+= keyboard_lastchar
     }
   if selected == 5 || selected == 8 {
     if (ord(keyboard_lastchar)&gt;47) &amp;&amp; (ord(keyboard_lastchar)&lt;58)
-      port+= keyboard_lastchar
+      if string_length(port) &lt; 5
+        if (!enabled)
+          port+= keyboard_lastchar
     }
   if selected == 7 {
     if (ord(keyboard_lastchar)&gt;32) &amp;&amp; (ord(keyboard_lastchar)&lt;128)
       ip+= keyboard_lastchar
     else if (ord(keyboard_lastchar) &gt;= 128)
-      nickname+= '?'
+      ip+= '?'
     }
+  recalcStrings(self)
   }
 keyboard_lastchar = ''
 
+//timer
 connectTimeout--
 if (connectTimeout == 0 &amp;&amp; !connected) {
   network_destroy(global.client)
   global.client = -1
   show_debug_message("destroyed client")
 }
+
+//mouse cursor
+if (mouse_x + mouse_y != mousePos) {
+  mousePos = mouse_x + mouse_y
+  if point_in_rectangle(mouse_x, mouse_y, 0,0,640,100) 
+    hovered = 0
+  else if point_in_rectangle(mouse_x, mouse_y, 0,120,640,200)
+    hovered = 1
+  else if point_in_rectangle(mouse_x, mouse_y, 0,200,640,280)
+    hovered = 2
+  else if point_in_rectangle(mouse_x, mouse_y, 0,280,640,360)
+    hovered = 3
+  else if point_in_rectangle(mouse_x, mouse_y, 640,120,960,200)
+    hovered = 9
+  else if point_in_rectangle(mouse_x, mouse_y, 960,120,1280,200) 
+    hovered = 10
+  else if point_in_rectangle(mouse_x, mouse_y, 640,200,1280,280) {
+    if menuHost hovered = 4
+    else if menuCli hovered = 7
+    }
+  else if point_in_rectangle(mouse_x, mouse_y, 640,280,1280,360) {
+    if menuHost hovered = 5
+    else if menuCli hovered = 8
+    }
+  else if point_in_rectangle(mouse_x, mouse_y, 640,360,1280,440)
+    if menuCli hovered = 6
+  recalcBoundings(self)
+  }
 </string>
           </argument>
         </arguments>
@@ -346,9 +505,11 @@ else if type = network_type_non_blocking_connect {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>draw_set_alpha(0.1)
+            <string>//background
+draw_set_alpha(0.1)
 draw_sprite(sMenuBg,0,0,0)
 
+//version info
 draw_set_font(fTetris)
 draw_set_alpha(1)
 draw_set_color(c_white)
@@ -356,88 +517,84 @@ draw_set_halign(fa_left)
 draw_set_valign(fa_bottom)
 draw_text_transformed(0,720,global.version,0.4,0.4,0)
 
-draw_set_halign(fa_right)
-draw_text(1280,720,'Game controls:
+//hlep
+draw_text_transformed(0,675,'Game controls:
 Z/X - rotate
 Left/right - shift
 Down - drop
 Space - restart game
-Esc - quit to menu')
+Esc - quit to menu
+__________________', 0.4, 0.4, 0)
 
-draw_set_valign(fa_top)
-
+//general elements
+draw_set_valign(fa_center)
+draw_set_halign(fa_right)
 draw_text(420, 50, "START PvPETRIS")
-draw_text(310, 150, "Nickname:")
-draw_text(310, 230, "Level:")
-draw_text(310, 310, "Seed:")
-
-draw_text(310,450, "Host:")
-draw_text(310,530, "Port:")
-
-draw_text(950, 50, "CONNECT")
-draw_text(950, 150, "IP:")
-draw_text(950, 230, "Port:")
+draw_text(310, 160, "Nickname:")
+draw_text(310, 240, "Level:")
+draw_text(310, 320, "Seed:")
 
 draw_set_halign(fa_left)
+draw_text(330, 160, drawName)
+draw_text(330, 240, drawLevel)
+draw_text(330, 320, drawSeed)
 
-draw_text(330, 150, nickname)
-draw_text(330, 230, level)
-draw_text(330, 310, seed)
+//mpl menu
+draw_set_halign(fa_center)
+draw_text(960, 50, "PLAY w/ FRIEND")
+    draw_text(900, 160, "HOST")
+    draw_text(1020,160, "JOIN")  
 
-if enabled
-draw_text(330,450, "ENABLED")
-else
-draw_text(330,450, "enable")
-draw_text(330,530, port)
+//mpl host menu
+if (menuHost) {
+  draw_set_halign(fa_right)
+  draw_text(950, 240, "Server:")
+  draw_text(950, 320, "Port:")
+  if (enabled)
+    draw_text(800, 400, "Status:")
+  draw_set_halign(fa_left)
+  if (enabled)
+    draw_text(970, 240, "ENABLED")
+  else
+    draw_text(970, 240, "ENABLE")
+  draw_text(970,320, drawPort)
+  if (enabled) {
+    if (clientConnected)
+      draw_text(820, 400, client_name + " connected")
+    else
+      draw_text(820, 400, "waiting for player2")
+    }
+  }
 
-draw_text(970, 150, ip)
-draw_text(970, 230, port)
+//mpl client menu
+if (menuCli) {
+  draw_set_halign(fa_right)
+  draw_text(950, 240, "IP:")
+  draw_text(950, 320, "Port:")
+  if (connectTimeout &gt; 0 || connected)
+    draw_text(800, 400, "Status:")
+  else
+    draw_text(950, 400, "CONNECT")
+  draw_set_halign(fa_left)
+  draw_text(970, 240, drawIp)
+  draw_text(970, 320, drawPort)
+  if (connectTimeout &gt; 0 || connected) {
+    if (connected)
+      draw_text(820, 400, "connected to " + client_name)
+    else
+      draw_text(820, 400, "connecting")
+    }
+  }
 
+//selected menu item
 draw_set_blend_mode(bm_subtract)
 draw_set_color(c_aqua)
-switch selected {
-  case 0:
-    draw_rectangle(0,0,640,100,false)
-    break
-  case 1:
-    draw_rectangle(0,120,640,200,false)
-    break
-  case 2:
-    draw_rectangle(0,200,640,280,false)
-    break
-  case 3:
-    draw_rectangle(0,280,640,360,false)
-    break
-  case 4:
-    draw_rectangle(0,420,640,500,false)
-    break
-  case 5:
-    draw_rectangle(0,500,640,580,false)
-    break
-  case 6:
-    draw_rectangle(640,0,1280,100,false)
-    break
-  case 7:
-    draw_rectangle(640,120,1280,200,false)
-    break
-  case 8:
-    draw_rectangle(640,200,1280,280,false)
-  }
+draw_rectangle(sX1,sY1,sX2,sY2,false)
 draw_set_blend_mode(bm_normal)
+draw_rectangle(hX1,hY1,hX2,hY2,true)
 
-if enabled 
-  if clientConnected
-    draw_text(850,450, "player2: " + client_name)
-  else {
-    draw_text(700,450, "wait for player2")
-    draw_sprite_ext(sprite1,0,1024,468,0.5,0.5,connectTimeout*12,c_white,1)
-    }
-else if connected
-  draw_text(850,450, "player1: " + client_name)
-  
 if connectTimeout &gt; 0 &amp;&amp; !connected {
-  draw_text(789,450, "connecting")
-  draw_sprite_ext(sprite1,0,1024,468,0.5,0.5,connectTimeout*12,c_white,1)
+  draw_sprite_ext(sprite1,0,1060,400,0.5,0.5,connectTimeout*16,c_white,1)
   }
 
 if vError 

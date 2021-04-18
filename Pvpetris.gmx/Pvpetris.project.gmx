@@ -25,6 +25,8 @@
     <script>scripts\oAdapterSynchRecv.gml</script>
     <script>scripts\envGetNickname.gml</script>
     <script>scripts\initGlobal.gml</script>
+    <script>scripts\recalcStrings.gml</script>
+    <script>scripts\recalcBoundings.gml</script>
   </scripts>
   <fonts name="fonts">
     <font>fonts\font0</font>
