@@ -79,7 +79,7 @@ else {
           }
     }
   //recalc control before burn  
-  if (lines + ttrlines + pp != control)
+  if (lines + ttrlines + pp + controlAdd != control)
     game_end()
   //count pointes for dropped tiles
   pp+= dropped + level
@@ -106,7 +106,7 @@ else {
   softdrop = false
   dropped = 0
   //recalc control
-  control = lines + ttrlines + pp
+  control = lines + ttrlines + pp + controlAdd
   //send events
   if adapter != -1 {
     buffer_seek(global.buffer, buffer_seek_start, 0);

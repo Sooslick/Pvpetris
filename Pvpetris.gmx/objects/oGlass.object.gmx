@@ -61,8 +61,9 @@ dry = 0                     //I figure drough
 maxdry = 0
 pp = 0                      //ppoints
 ts = current_time           //timestamp
-control = 0                 //control point = lines + ttrlines + pp
-delay = 2000            //current delay
+controlAdd = random_range(1, 999)
+control = controlAdd        //control point = lines + ttrlines + pp + random component
+delay = 2000                //current delay
 
 for (var i=0; i&lt;20; i++)    //glass states (0 nothing, other color)
   for (var j=0; j&lt;10; j++)

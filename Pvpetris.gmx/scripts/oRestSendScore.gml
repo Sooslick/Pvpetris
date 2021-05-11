@@ -1,4 +1,4 @@
-if (control != lines + ttrlines + pp)
+if (control != lines + ttrlines + pp + controlAdd)
     exit
 
 var saltp1 = "SlightlyLoosened"
