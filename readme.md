@@ -1,9 +1,15 @@
 ﻿# Pvpetris
 
-PvP Tetris - самый обычный тетрис, который мало чем отличается от классических версий игры. Он написан под впечатлением от [чемпионата мира по классическому тетрису](https://thectwc.com/), и его главная особенность - это возможность сыграть с другом, повторяя атмосферу соревновательности с турнира.
+PvPetris is a regular Tetris game based on classic NES version. 
+We developed it being inspired by [Classic Tetris World Championship](https://thectwc.com/) 
+and the main feature of this game is multiplayer: play PvPetris with friend in real time!
 
-В текущей версии реализован необходимый минимум для игры вдвоем: возможность задать уровень сложности и общее зерно для генератора случайной последовательности фигурок. В несуществующих планах на дальнейшую разработку - многочисленные улучшения и больше соревновательности! Новые игровые режимы, возможность игры большой компанией а так же выделенный сервер, чтобы ни у кого не было необходимости возиться с роутером и настраивать порты.
+[Download page](http://sooslick.itpony.ru/pvpetris/)
 
-[Страничка](http://sooslick.itpony.ru/pvpetris/)
+### Building from source code
 
-[Как так вышло](https://vk.com/@sooslick-boom-tetris-for-jeff)
+1. Prepare DB and create table "PVPETRIS" using script [web/create_table.sql]
+2. Change properties in [config.ini] to your own
+3. Run `php -f install.php`
+4. Set frontend directory as root directory for web server
+5. Compile Pvpetris.gmx in GameMaker Studio

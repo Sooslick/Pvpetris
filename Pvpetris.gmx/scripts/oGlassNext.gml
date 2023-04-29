@@ -1,9 +1,13 @@
+if controlSequence != sequence
+  game_end()
+
 nextrequest = false
 sequencePosition++
 if sequencePosition == sequenceLength-1 {
   //fix first fig at next seq
   sequence = string_char_at(sequence, sequencePosition) + nextSequence
   sequencePosition = 0
+  controlSequence = sequence
   //regen next seq
   for (i=0; i<sequenceLength; i++)
     nextSequence+= string_char_at(allowedFigures, irandom(string_length(allowedFigures)))

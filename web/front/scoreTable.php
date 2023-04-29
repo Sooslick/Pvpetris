@@ -1,41 +1,32 @@
-<?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-?>
-<html>
-<body>
-<center>
+<div class='pvpScore'>
 <h1>PvPetris score table</h1>
 <table width="900" cellspacing="0">
-<tr>
+<thead>
 <th width="5%">PLACE</th>
 <th width="30%">NAME</th>
 <th width="20%">SCORE</th>
 <th width="20%">LINES</th>
 <th width="20%">TTR%</th>
 <th width="5%">START LEVEL</th>
-<tr>
-
+</thead>
 <?php
-$ini = parse_ini_file("dbConfig.ini");
-$dbs = "mysql:host=" . $ini['host'] . ";dbname=" . $ini['db'] . ";charset=utf8";
+$ini = parse_ini_file("${backendLocation}/config.ini");
 $opt = array(
-	PDO::ATTR_ERRMODE	     => PDO::ERRMODE_EXCEPTION,
-	PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC);
-$dbp = $ini['pw'];
-$dbn = $ini['db'];
+  PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+  PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC);
 try {
-	$pdo = new PDO($dbs, $dbn, $dbp, $opt);
+  $pdo = new PDO($ini['connection'], $ini['dbuser'], $ini['dbpw'], $opt);
 } catch (PDOException $e) {
-	$ok = false;
-	$err_string = 'Database error.';
+  $ok = false;
+  echo 'Database error.';
 }
-$request = 'SELECT * FROM PVPETRIS ORDER BY SCORE DESC LIMIT 100';
-$q = $pdo->query($request);
-$i = 1;
-while ($row = $q->fetch()) {
+if ($ok) {
+  $request = 'SELECT * FROM PVPETRIS ORDER BY SCORE DESC LIMIT 100';
+  $q = $pdo -> query($request);
+  $i = 1;
+  while ($row = $q -> fetch()) {
 	echo "<tr>";
-	echo "<td>".$i."</td>";
+	echo "<td>".$i++."</td>";
 	$nam = $row['NAME'];
 	$nam = str_replace("<", "&lt;", $nam);
 	$nam = str_replace(">", "&gt;", $nam);
@@ -49,11 +40,8 @@ while ($row = $q->fetch()) {
 	echo "<td>".$ttr."</td>";
 	echo "<td>".$row['STARTLEVEL']."</td>";
 	echo "</tr>";
-	$i++;
-	}
+  }
+}
 ?>
-
 </table>
-</center>
-</body>
-</html>
+</div>

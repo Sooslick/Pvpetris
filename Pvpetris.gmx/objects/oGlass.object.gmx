@@ -48,7 +48,7 @@ firstFigureTrigger = true   //don't send first figure socket
 allowedFigures = "ISZOTLJ"  //
 sequenceLength = 999        //pre-generated sequence length
 sequence = ""               //main
-nextSequence = ""           //next sequence for unique cases when number 1000 will be too small
+nextSequence = ""           //next sequence for unique cases when number 1000 will be too small (player will survive few levels of "deathscreen" at least)
 for (i=0; i&lt;sequenceLength; i++) {
   sequence+= string_char_at(allowedFigures, irandom(string_length(allowedFigures)))
   nextSequence+= string_char_at(allowedFigures, irandom(string_length(allowedFigures)))
@@ -63,6 +63,7 @@ pp = 0                      //ppoints
 ts = current_time           //timestamp
 controlAdd = random_range(1, 999)
 control = controlAdd        //control point = lines + ttrlines + pp + random component
+controlSequence = sequence
 delay = 2000                //current delay
 
 for (var i=0; i&lt;20; i++)    //glass states (0 nothing, other color)

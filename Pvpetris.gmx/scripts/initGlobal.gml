@@ -1,7 +1,7 @@
 global.domain = 'http://sooslick.itpony.ru/'
 global.restScore = 'pvpetris/rest.php'
 global.restSplash = 'wl/getSplash.php?r=PvPetris'
-global.version = 'PvPetris v0.1.6.1# © Sooslick Art Project'
+global.version = 'PvPetris v0.1.7.0 b1# © Sooslick Art Project'
 
 global.vlong = 338
 global.vlongMinAllowed = 336
