@@ -24,7 +24,6 @@
     <script>scripts\oAdapterSynchReq.gml</script>
     <script>scripts\oAdapterSynchRecv.gml</script>
     <script>scripts\envGetNickname.gml</script>
-    <script>scripts\initGlobal.gml</script>
     <script>scripts\recalcStrings.gml</script>
     <script>scripts\recalcBoundings.gml</script>
   </scripts>
@@ -43,6 +42,17 @@
     <room>rooms\room1</room>
     <room>rooms\room0</room>
   </rooms>
+  <constants number="9">
+    <constant name="hashPrivate">${private}</constant>
+    <constant name="hashPublic">${public}</constant>
+    <constant name="domain">${targetHost}</constant>
+    <constant name="restScore">rest/sendScore.php</constant>
+    <constant name="restSplash">rest/getSplash.php</constant>
+    <constant name="restGet">rest/getMyBest.php</constant>
+    <constant name="version">PvPetris v${version}# © Sooslick Art Project</constant>
+    <constant name="vlong">370</constant>
+    <constant name="vlongMinAllowed">370</constant>
+  </constants>
   <help>
     <rtf>help.rtf</rtf>
   </help>

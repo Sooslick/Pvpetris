@@ -28,7 +28,7 @@ if free {
     }
   }
 else {
-  //samy pizdaty debug-costyl ever чтобы не было индехоф боундс ехептиона
+  // Humble attempt to fix figure OoB placement by moving OoB squares to playzone
   var costyl = -1
   for (var i=0; i<4; i++)
     if fh[i] + currH >= 0 {

@@ -15,9 +15,7 @@ if string_length(s) > 0 {
   a[aind] = s
   aind++
   }
-if aind <= 2
-  return "Guy"
-if a[2] == ''
+if aind <= 2 || a[2] == ''
   return "Guy"
   
 var user = a[2]

@@ -25,8 +25,10 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>initGlobal()
-osinfo = os_get_info()
+            <string>global.adapter = false
+global.server = -1
+global.client = -1
+randomize()
 
 //general
 nickname = envGetNickname()
@@ -426,13 +428,13 @@ if type = network_type_data {
       if size &gt;= string_length(client_name) + 6
         vl = buffer_read(msg_buff, buffer_u32)
       buffer_seek(global.buffer, buffer_seek_start, 0);
-      if vl &gt;= global.vlongMinAllowed {
-        //accept packet
+      // checking version descriptor
+      if vl &gt;= vlongMinAllowed {
         buffer_write(global.buffer, buffer_s8, 1)
         buffer_write(global.buffer, buffer_string, nickname)
         }
       else {
-        //decline packet
+        // decline incompatible
         client_name = ""
         clientConnected = false
         buffer_write(global.buffer, buffer_s8, 3)
@@ -442,7 +444,7 @@ if type = network_type_data {
     case 1:    //init packet from server
       client_name = buffer_read(msg_buff, buffer_string)
       break
-    case 2:    //procceed to the game
+    case 2:    //proceed to the game
       global.level = buffer_read(msg_buff, buffer_string)
       global.seed = buffer_read(msg_buff, buffer_string)
       global.adapter = true
@@ -479,7 +481,7 @@ else if type = network_type_non_blocking_connect {
     buffer_seek(global.buffer, buffer_seek_start, 0);
     buffer_write(global.buffer, buffer_s8, 0)
     buffer_write(global.buffer, buffer_string, nickname)
-    buffer_write(global.buffer, buffer_u32, global.vlong)
+    buffer_write(global.buffer, buffer_u32, vlong)        // send game version descriptor
     network_send_packet( global.client, global.buffer, buffer_tell(global.buffer) );
     }
   }
