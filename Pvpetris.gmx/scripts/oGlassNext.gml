@@ -114,7 +114,10 @@ for (var i=0; i<4; i++) {
   if fh[i]+currH >= 0
     if arr[fh[i]+currH, fx[i]+currX] != 0 {
       gameover = true
-      oRestSendScore()
+      if pp > pbScore || lines > pbLines {
+        oRestSendScore()
+        scoresSent = true
+        }
       break
       }
   }

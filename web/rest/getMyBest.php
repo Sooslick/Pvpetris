@@ -6,6 +6,7 @@ ini_set('display_errors', 1);
 //check _GET parameters
 $ok = true;
 $err_string = '';
+$name = '';
 if (isset($_GET['name'])) {$name = $_GET['name'];} else {$ok = false; $err_string .= "No name passed. ";}
 
 //fix body
@@ -53,7 +54,7 @@ if ($ok) {
 		$myscore = $row['MYSCORE'];
 		$mylines = $row['MYBURN'];
 	}
-	echo "$myscore,$myburn,$maxscore,$maxburn";
+	echo "$myscore,$mylines,$maxscore,$maxlines";
 	file_put_contents($ini['logpath'], PHP_EOL . date('d.m.y H:i:s') . ' PvPetris getScore by ' . $name, FILE_APPEND);
 } else {
 	echo $err_string;

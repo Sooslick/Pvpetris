@@ -15,7 +15,7 @@ if (isset($_GET['hash'])) {$hash = $_GET['hash'];} else {$ok = false; $err_strin
 
 //check hash
 if ($ok) {
-  $checkhash = sha1($name.$score."SlightlyLoosened338BOOM!! Tetris for Jeff!");		//todo move secret constants to configs
+  $checkhash = sha1($name.$score.'${private}'.'${vlong}');
   if ($checkhash != $hash) {
     $ok = false;
     $err_string = "Hash is not identical. Name: ".$name;

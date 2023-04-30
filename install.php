@@ -27,7 +27,7 @@ foreach($files as $path) {
 	file_put_contents("$backendLocation/$path", $fcontent);
 }
 
-echo "Deployed backend files";
+echo "Deployed backend files\n";
 
 $files = array_slice(scandir('web/front'), 2);
 foreach($files as $path) {
@@ -45,12 +45,12 @@ foreach($files as $path) {
 	file_put_contents("$restLocation/$path", $fcontent);
 }
 
-echo "Deployed frontend files";
+echo "Deployed frontend files\n";
 
-$fcontent = file_get_contents("Pvpetris.gmx/Pvpetris.project");
+$fcontent = file_get_contents("Pvpetris.gmx/Pvpetris.project.gmx");
 foreach($ini as $key => $value)
 	$fcontent = str_replace('${'.$key.'}', $value, $fcontent);
-file_put_contents("Pvpetris.gmx/Pvpetris.project", $fcontent);
+file_put_contents("Pvpetris.gmx/Pvpetris.project.gmx", $fcontent);
 
-echo "Game globals updated";
+echo "Game globals updated\n";
 ?>

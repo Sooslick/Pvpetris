@@ -98,9 +98,18 @@ memestring = ""
 memetimer = 0
 
 oGlassNext()
-delay = 2000            //reset delay again!!! tak nado!!!!!
+delay = 2000    // reset delay to initial value cause oGlassNext recalculates it
 
 oAdapterInit(adapter)
+
+scoresSent = false
+pbScore = 0
+wrScore = 0
+pbLines = 0
+wrLines = 0
+var tempnick = string_replace_all(global.plleft, "&amp;", "%26")
+tempnick = string_replace_all(tempnick, "?", "%3F")
+http_get(domain + restGet + "?name=" + tempnick)
 </string>
           </argument>
         </arguments>
@@ -144,7 +153,7 @@ oAdapterInit(adapter)
     }
   }
   
-if keyboard_check_released(vk_escape) || gamepad_button_check_released(0, gp_select) {
+else if keyboard_check_released(vk_escape) || gamepad_button_check_released(0, gp_select) {
   if gameover {
     show_debug_message("quit cleanup")
     instance_destroy()
@@ -157,13 +166,20 @@ if keyboard_check_released(vk_escape) || gamepad_button_check_released(0, gp_sel
     game_restart()
   }
 }
+
+else if keyboard_check_released(vk_enter) {
+  if gameover &amp;&amp; !scoresSent {
+    oRestSendScore()
+    scoresSent = true
+  }
+}
   
 if gameover {
   if gameoverAlpha &gt; 0.25
     gameoverAlpha-= 0.005
   memetimer++
   if memetimer == 2500
-    http_get(global.domain+global.restSplash)
+    http_get(domain + restSplash)
   exit
   }
 if lineanim {
@@ -278,11 +294,35 @@ ts = current_time
 if async_load[? "status"] != 0
   exit
   
-//response is loaded
-var html = json_decode(async_load[? "result"])
-if html != -1
-  if !is_undefined(html[?'CONTENT'])
-    memestring = html[?'CONTENT']
+if string_pos(restScore, async_load[?'url']) != 0 {
+  // restScore response
+  var json = json_decode(async_load[? "result"])
+  if json != -1 {
+    if !is_undefined(json[?'CONTENT'])
+      memestring = json[?'CONTENT']
+    ds_map_destroy(json)
+  }
+} else {
+  // getMyBest response
+  var response = async_load[? "result"]
+  var count = 0
+  var tempstr = ''
+  var tempchar;
+  var strings;
+  for (var i = 1; i &lt;= string_length(response); i++) {
+    tempchar = string_char_at(response, index)
+    if tempchar == ',' {
+      strings[count++] = tempstr
+      tempstr = ''
+    } else
+      tempstr+= tempchar
+  }
+  strings[count] = tempstr
+  pbScore = real(strings[0])
+  pbLines = real(strings[1])
+  wrScore = real(strings[2])
+  wrLines = real(strings[3])
+}
 </string>
           </argument>
         </arguments>

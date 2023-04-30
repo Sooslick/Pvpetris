@@ -34,6 +34,7 @@ randomize()
 nickname = envGetNickname()
 level = "0"
 seed = ""
+sendMode = 2    // send modes: 0 nothing, 1 pbs, 2 all
 
 //mpl
 ip = "127.0.0.1"
@@ -195,10 +196,12 @@ else if keyboard_check_pressed(vk_up) {
 //UI enter pressed (or mouse clicked)
 else if keyboard_check_pressed(vk_enter) || gamepad_button_check_pressed(0, gp_start) {
   if selected == 0 {
+    // don't start if connected to host player
     if !connected {
       if seed == ""
         seed = string(irandom(2147483647))
       if clientConnected {
+        // send start signal to client
         global.adapter = true
         buffer_seek(global.buffer, buffer_seek_start, 0);
         buffer_write(global.buffer, buffer_s8, 2)
@@ -208,16 +211,18 @@ else if keyboard_check_pressed(vk_enter) || gamepad_button_check_pressed(0, gp_s
         network_send_packet( global.sock, global.buffer, buffer_tell(global.buffer) );
         }
       else if enabled {
+        // destroy server if nobody connected
         global.adapter = false
         network_destroy(global.server)
         global.server = -1
         show_debug_message("stopped server")
       }
+      // start game
       global.level = level
       global.seed = seed
       if global.adapter
         global.botnet = global.sock
-      //todo else destroy socket
+      //todo else destroy socket (UPD 04.2023: why?)
       global.plleft = nickname
       global.plright = client_name
       room_goto(room0)
@@ -225,6 +230,7 @@ else if keyboard_check_pressed(vk_enter) || gamepad_button_check_pressed(0, gp_s
       }
     }
   else if selected == 4 {
+    // create server
     if !enabled &amp;&amp; !connected &amp;&amp; connectTimeout &lt;= 0 {
       enabled = true
       global.server = network_create_server(network_socket_tcp, real(port), 3);
@@ -232,6 +238,7 @@ else if keyboard_check_pressed(vk_enter) || gamepad_button_check_pressed(0, gp_s
       }
     }
   else if selected == 6 {
+    // join game
     if !enabled &amp;&amp; !connected &amp;&amp; connectTimeout&lt;=0 {
       connectTimeout = 153      //five seconds + 3 extra ticks
       network_set_config(network_config_connect_timeout, 5000)
@@ -242,6 +249,7 @@ else if keyboard_check_pressed(vk_enter) || gamepad_button_check_pressed(0, gp_s
       }
     }
   else if selected == 9 {
+    // open host menu
     connected = false
     connectTimeout = 0
     menuCli = false
@@ -250,6 +258,7 @@ else if keyboard_check_pressed(vk_enter) || gamepad_button_check_pressed(0, gp_s
     global.client = -1
     }
   else if selected == 10 {
+    // open client menu
     enabled = false
     clientConnected = false
     menuCli = true
@@ -429,7 +438,7 @@ if type = network_type_data {
         vl = buffer_read(msg_buff, buffer_u32)
       buffer_seek(global.buffer, buffer_seek_start, 0);
       // checking version descriptor
-      if vl &gt;= vlongMinAllowed {
+      if vl != vlong {
         buffer_write(global.buffer, buffer_s8, 1)
         buffer_write(global.buffer, buffer_string, nickname)
         }
