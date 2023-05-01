@@ -65,8 +65,9 @@ controlAdd = random_range(1, 999)
 control = controlAdd        //control point = lines + ttrlines + pp + random component
 controlSequence = sequence
 delay = 2000                //current delay
+usedSpareDelay = false      //extra delay before fixate
 
-for (var i=0; i&lt;20; i++)    //glass states (0 nothing, other color)
+for (var i=0; i&lt;20; i++)    //glass states (0 nothing, otherwise color)
   for (var j=0; j&lt;10; j++)
     arr[i,j] = 0;
 
@@ -96,6 +97,7 @@ gameoverAlpha = 1
 keydelay = 0
 memestring = ""
 memetimer = 0
+escTimer = 0
 
 oGlassNext()
 delay = 2000    // reset delay to initial value cause oGlassNext recalculates it
@@ -152,9 +154,9 @@ http_get(domain + restGet + "?name=" + tempnick)
       }
     }
   }
-  
+
 else if keyboard_check_released(vk_escape) || gamepad_button_check_released(0, gp_select) {
-  if gameover {
+  if gameover || escTimer &gt; 0 {
     show_debug_message("quit cleanup")
     instance_destroy()
     instance_destroy(adapter)
@@ -164,7 +166,8 @@ else if keyboard_check_released(vk_escape) || gamepad_button_check_released(0, g
     if (global.server != -1) network_destroy(global.server)
     if (global.client != -1) network_destroy(global.client)
     game_restart()
-  }
+  } else
+    escTimer = 80
 }
 
 else if keyboard_check_released(vk_enter) {
@@ -173,7 +176,9 @@ else if keyboard_check_released(vk_enter) {
     scoresSent = true
   }
 }
-  
+
+if (escTimer &gt; 0)
+  escTimer--
 if gameover {
   if gameoverAlpha &gt; 0.25
     gameoverAlpha-= 0.005
@@ -214,58 +219,46 @@ if lineanim {
     }
   exit
   }
-  
+
 delay-= current_time - ts
 if delay &lt; 0 {
   if !softdrop
     delay+= period
   else
-    delay = 13
-  if nextrequest {
+    delay = 13      // fine balanced value between softdrop ticks
+  if nextrequest
     oGlassNext()
-    }
   else
     oGlassGravity()
   }
-if !softdrop {
-  if keyboard_check(vk_left) || gamepad_button_check(0,gp_padl) {
-    var result = true;
-    if keydelay == 0
-      result = oGlassShift(-1)
-    if result {
-      keydelay+= current_time - ts
-      if keydelay &gt; 80
-        keydelay = 0
-      }
-    else
-      keydelay = 0
-    }
-  if keyboard_check(vk_right) || gamepad_button_check(0,gp_padr) {
-    var result = true;
-    if keydelay == 0
-      oGlassShift(1)
-    if result {
-      keydelay+= current_time - ts
-      if keydelay &gt; 80
-        keydelay = 0
-      }
-    else
-      keydelay = 0
-    }
-  if keyboard_check_pressed(ord("Z")) || gamepad_button_check_pressed(0,gp_face3)
-    oGlassRot(-1)
-  if keyboard_check_pressed(ord("X")) || gamepad_button_check_pressed(0,gp_face2)
-    oGlassRot(1)
-}
+
+var shiftDirection = 0
+if keyboard_check(vk_left) || gamepad_button_check(0,gp_padl) 
+  shiftDirection = -1
+else if keyboard_check(vk_right) || gamepad_button_check(0,gp_padr)
+  shiftDirection = 1
+if shiftDirection != 0 {
+  keydelay-= (current_time - ts)
+  if keydelay &lt;= 0
+    if oGlassShift(shiftDirection)
+      keydelay = 80
+  }
+if keyboard_check_released(vk_left) || keyboard_check_released(vk_right) ||
+   gamepad_button_check_released(0, gp_padl) || gamepad_button_check_released(0, gp_padr)
+  keydelay = 0
+
+if keyboard_check_pressed(ord("Z")) || gamepad_button_check_pressed(0,gp_face3)
+  oGlassRot(-1)
+else if keyboard_check_pressed(ord("X")) || gamepad_button_check_pressed(0,gp_face2)
+  oGlassRot(1)
+
 if keyboard_check_pressed(vk_down) || gamepad_button_check_pressed(0,gp_padd) {
   softdrop = true
   delay = 0
   }
 if keyboard_check_released(vk_down) || gamepad_button_check_released(0, gp_padd)
   softdrop = false
-if keyboard_check_released(vk_left) || keyboard_check_released(vk_right) ||
-   gamepad_button_check_released(0, gp_padl) || gamepad_button_check_released(0, gp_padr)
-  keydelay = 0
+
 ts = current_time
 </string>
           </argument>

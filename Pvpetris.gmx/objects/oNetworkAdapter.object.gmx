@@ -54,7 +54,7 @@ nextFig = ""
 burn = 0
 burnList = 0
 
-for (var i=0; i&lt;20; i++)    //glass states (0 nothing, other color)
+for (var i=0; i&lt;20; i++)    //glass states (0 nothing, otherwise color)
   for (var j=0; j&lt;10; j++)
     arr[i,j] = 0;
     
@@ -171,10 +171,6 @@ if type = network_type_data {
     case 1:
       global.plright = buffer_read(msg_buff, buffer_string)
       break
-    case 19:  //restart
-      global.seed = string(random_get_seed() + 1)
-      room_restart()
-      break
     case 11:  //shift
       currX = buffer_read(msg_buff, buffer_s8)
       break
@@ -219,45 +215,31 @@ if type = network_type_data {
       lines = buffer_read(msg_buff, buffer_s16)
       ttrpercent = buffer_read(msg_buff, buffer_s8)
       level = buffer_read(msg_buff, buffer_s8)
-      //if lines &gt; 0
-      //  ttrpercent = floor(ttrlines / lines * 100)
-      clmod = level*8
-      //copypasted costyl
-      var costyled = false
-      var costyl = -1
-        for (var i=0; i&lt;4; i++)
-          if (fh[i] + currH &gt;= 0) &amp;&amp; (fh[i] + currH &lt; 20) {
-            costyl = i
-            break
-            }
-        for (var i=0; i&lt;4; i++)
-          if (fh[i] + currH &lt; 0) || (fh[i] + currH &gt;= 20) {
-            costyled = true
-            fh[i] = fh[costyl]
-            fx[i] = fx[costyl]
-            }
-      //duplicated copypasted costyl for another axis
-      costyl = -1
-        for (var i=0; i&lt;4; i++)
-          if (fx[i] + currX &gt;= 0) &amp;&amp; (fx[i] + currX &lt; 10) {
-            costyl = i
-            break
-            }
-        for (var i=0; i&lt;4; i++)
-          if (fx[i] + currX &lt; 0) || (fx[i] + currX &gt;= 10) {
-            costyled = true
-            fh[i] = fh[costyl]
-            fx[i] = fx[costyl]
-            }
-      //fixate &amp; check synch required
-      var synch = false
-      for (var i=0; i&lt;4; i++) {
-        if arr[fh[i]+currH, fx[i]+currX] != 0
-          synch = true
-        arr[fh[i]+currH, fx[i]+currX] = currClr
+      gameover = buffer_read(msg_buff, buffer_bool)
+      clmod = (lines div 10)*8
+      // safety checks (OoB placement)
+      // vertical axis checks
+      var missplacement = false
+      for (var i=0; i&lt;4; i++)
+        if fh[i] + currH &gt;= 20
+          missplacement = true
+      // horisontal axis checks (game potentially can crash without this check)
+      for (var i=0; i&lt;4; i++)
+        if (fx[i] + currX &lt; 0) || (fx[i] + currX &gt;= 10)
+          missplacement = true
+      //fixate (&amp; additional safety check for occupied cells)
+      if (!missplacement) {
+        for (var i=0; i&lt;4; i++) {
+          var tempH = fh[i]+currH
+          if (tempH &lt; 0)
+            continue
+          if arr[tempH, fx[i]+currX] != 0
+            missplacement = true
+          arr[tempH, fx[i]+currX] = currClr
+          }
         }
       //request synch
-      if synch &amp;&amp; !costyled {
+      if missplacement {
         buffer_seek(global.buffer, buffer_seek_start, 0);
         buffer_write(global.buffer, buffer_s8, 16)
         network_send_packet( global.botnet, global.buffer, buffer_tell(global.buffer) );
@@ -310,6 +292,10 @@ if type = network_type_data {
       break
     case 17:
       oAdapterSynchRecv()
+      break
+    case 19:  //restart
+      global.seed = string(random_get_seed() + 1)
+      room_restart()
       break
     }
   }

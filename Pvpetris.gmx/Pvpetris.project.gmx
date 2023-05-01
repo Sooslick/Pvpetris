@@ -26,6 +26,7 @@
     <script>scripts\envGetNickname.gml</script>
     <script>scripts\recalcStrings.gml</script>
     <script>scripts\recalcBoundings.gml</script>
+    <script>scripts\oGlassGameover.gml</script>
   </scripts>
   <fonts name="fonts">
     <font>fonts\font0</font>

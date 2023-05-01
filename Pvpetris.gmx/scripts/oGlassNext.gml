@@ -16,10 +16,11 @@ if sequencePosition == sequenceLength-1 {
 //generate figure
 currRot = 0
 currX = 5
-currH = 0
+currH = -1
 currFig = string_char_at(sequence, sequencePosition)
 nextFig = string_char_at(sequence, sequencePosition+1)
 delay = period
+usedSpareDelay = false
 ts = current_time
 switch currFig {
   case "I":
@@ -113,11 +114,7 @@ if dry > maxdry
 for (var i=0; i<4; i++) {
   if fh[i]+currH >= 0
     if arr[fh[i]+currH, fx[i]+currX] != 0 {
-      gameover = true
-      if pp > pbScore || lines > pbLines {
-        oRestSendScore()
-        scoresSent = true
-        }
+      oGlassGameover()
       break
       }
   }
