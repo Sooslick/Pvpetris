@@ -10,6 +10,7 @@
 <th width="5%">START LEVEL</th>
 </thead>
 <?php
+$ok = true;
 $ini = parse_ini_file("${backendLocation}/config.ini");
 $opt = array(
   PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

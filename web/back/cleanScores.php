@@ -1,4 +1,5 @@
 <?php
+$ok = true;
 $ini = parse_ini_file("config.ini");
 $opt = array(
 	PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

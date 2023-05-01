@@ -177,8 +177,7 @@ else if keyboard_check_released(vk_enter) {
 if gameover {
   if gameoverAlpha &gt; 0.25
     gameoverAlpha-= 0.005
-  memetimer++
-  if memetimer == 2500
+  if memetimer++ == 2500
     http_get(domain + restSplash)
   exit
   }
@@ -294,15 +293,10 @@ ts = current_time
 if async_load[? "status"] != 0
   exit
   
-if string_pos(restScore, async_load[?'url']) != 0 {
-  // restScore response
-  var json = json_decode(async_load[? "result"])
-  if json != -1 {
-    if !is_undefined(json[?'CONTENT'])
-      memestring = json[?'CONTENT']
-    ds_map_destroy(json)
-  }
-} else {
+if string_pos(restSplash, async_load[?'url']) != 0 {
+  // getSplash response
+  memestring = async_load[? "result"]
+} else if (string_pos(restGet, async_load[?'url']) != 0) {
   // getMyBest response
   var response = async_load[? "result"]
   var count = 0

@@ -526,7 +526,7 @@ draw_set_alpha(1)
 draw_set_color(c_white)
 draw_set_halign(fa_left)
 draw_set_valign(fa_bottom)
-draw_text_transformed(0,720,global.version,0.4,0.4,0)
+draw_text_transformed(0,720,version,0.4,0.4,0)
 
 //hlep
 draw_text_transformed(0,675,'Game controls:

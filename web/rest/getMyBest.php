@@ -12,9 +12,11 @@ if (isset($_GET['name'])) {$name = $_GET['name'];} else {$ok = false; $err_strin
 //fix body
 $name = str_replace("%", "&#37;", $name);
 
+$ini = parse_ini_file("${backendLocation}/config.ini");
+$logFname = $ini['logFileName'];
+
 //check main database
 if ($ok) {
-	$ini = parse_ini_file("${backendLocation}/config.ini");
 	$opt = array(
 		PDO::ATTR_ERRMODE	     => PDO::ERRMODE_EXCEPTION,
 		PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC);
@@ -55,8 +57,8 @@ if ($ok) {
 		$mylines = $row['MYBURN'];
 	}
 	echo "$myscore,$mylines,$maxscore,$maxlines";
-	file_put_contents($ini['logpath'], PHP_EOL . date('d.m.y H:i:s') . ' PvPetris getScore by ' . $name, FILE_APPEND);
+	file_put_contents("${backendLocation}/$logFname", PHP_EOL . date('d.m.y H:i:s') . ' PvPetris getScore by ' . $name, FILE_APPEND);
 } else {
 	echo $err_string;
-	file_put_contents($ini['logpath'], PHP_EOL . date('d.m.y H:i:s') . ' PvPetris getScore fail: ' . $err_string, FILE_APPEND);
+	file_put_contents("${backendLocation}/$logFname", PHP_EOL . date('d.m.y H:i:s') . ' PvPetris getScore fail: ' . $err_string, FILE_APPEND);
 }

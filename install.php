@@ -47,10 +47,13 @@ foreach($files as $path) {
 
 echo "Deployed frontend files\n";
 
-$fcontent = file_get_contents("Pvpetris.gmx/Pvpetris.project.gmx");
-foreach($ini as $key => $value)
-	$fcontent = str_replace('${'.$key.'}', $value, $fcontent);
-file_put_contents("Pvpetris.gmx/Pvpetris.project.gmx", $fcontent);
+$files = array("Pvpetris.gmx/Configs/Default.config.gmx", "Pvpetris.gmx/Pvpetris.project.gmx");
+foreach($files as $path) {
+	$fcontent = file_get_contents($path);
+	foreach($ini as $key => $value)
+		$fcontent = str_replace('${'.$key.'}', $value, $fcontent);
+	file_put_contents($path, $fcontent);
+}
 
 echo "Game globals updated\n";
 ?>

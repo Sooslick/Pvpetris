@@ -43,12 +43,12 @@
     <room>rooms\room0</room>
   </rooms>
   <constants number="7">
-    <constant name="hashPrivate">${private}</constant>
-    <constant name="domain">${targetHost}</constant>
-    <constant name="restScore">rest/sendScore.php</constant>
-    <constant name="restSplash">rest/getSplash.php</constant>
-    <constant name="restGet">rest/getMyBest.php</constant>
-    <constant name="version">PvPetris v${version}# © Sooslick Art Project</constant>
+    <constant name="hashPrivate">"${private}"</constant>
+    <constant name="domain">"${targetHost}"</constant>
+    <constant name="restScore">"rest/sendScore.php"</constant>
+    <constant name="restSplash">"rest/getSplash.php"</constant>
+    <constant name="restGet">"rest/getMyBest.php"</constant>
+    <constant name="version">"PvPetris v${version}# © Sooslick Art Project"</constant>
     <constant name="vlong">${vlong}</constant>
   </constants>
   <help>

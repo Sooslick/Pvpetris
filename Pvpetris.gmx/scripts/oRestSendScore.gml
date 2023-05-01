@@ -9,7 +9,7 @@ var ttrl = string(ttrlines)
 var hash = sha1_string_utf8(nick + points + hashPrivate + string(vlong))
 nick = string_replace_all(nick, "&", "%26")
 nick = string_replace_all(nick, "?", "%3F")
-http_get(domain + global.restScore
+http_get(domain + restScore
             + "?name=" + nick
             + "&score=" + points
             + "&burn=" + burn
