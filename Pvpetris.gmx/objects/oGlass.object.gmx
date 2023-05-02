@@ -100,11 +100,13 @@ memetimer = 0
 escTimer = 0
 
 oGlassNext()
+currH = 0       // reset initial height to zero to show entire figure
 delay = 2000    // reset delay to initial value cause oGlassNext recalculates it
 
 oAdapterInit(adapter)
 
 scoresSent = false
+scoresRecieved = false
 pbScore = 0
 wrScore = 0
 pbLines = 0
@@ -190,7 +192,7 @@ if lineanim {
   animdelay-= current_time - ts
   ts = current_time
   if animdelay &lt;= 0
-    animdelay = 66
+    animdelay = 64
   else
     exit
   if lineanimtick &lt; 5 {
@@ -297,7 +299,7 @@ if string_pos(restSplash, async_load[?'url']) != 0 {
   var tempchar;
   var strings;
   for (var i = 1; i &lt;= string_length(response); i++) {
-    tempchar = string_char_at(response, index)
+    tempchar = string_char_at(response, i)
     if tempchar == ',' {
       strings[count++] = tempstr
       tempstr = ''
@@ -305,10 +307,21 @@ if string_pos(restSplash, async_load[?'url']) != 0 {
       tempstr+= tempchar
   }
   strings[count] = tempstr
-  pbScore = real(strings[0])
-  pbLines = real(strings[1])
-  wrScore = real(strings[2])
-  wrLines = real(strings[3])
+  if !scoresRecieved {          // initial scores request
+    pbScore = real(strings[0])
+    pbLines = real(strings[1])
+    wrScore = real(strings[2])
+    wrLines = real(strings[3])
+    scoresRecieved = true
+    if (adapter != -1) {
+      var tempnick = string_replace_all(global.plright, "&amp;", "%26")
+      tempnick = string_replace_all(tempnick, "?", "%3F")
+      http_get(domain + restGet + "?name=" + tempnick)
+    }
+  } else {                      // display opponent's pb instead
+    wrScore = real(strings[0])
+    wrLines = real(strings[1])
+  }
 }
 </string>
           </argument>
@@ -345,13 +358,13 @@ if tetrisanim {
 
 draw_set_alpha(1)
 //draw glasses
-for (i=0; i&lt;20; i++) {
+for (var i=0; i&lt;20; i++) {
   draw_sprite(sBorder, 0, xLeft1, i*32)
   draw_sprite(sBorder, 0, xRight1, i*32)
   draw_sprite(sBorder, 0, xLeft2, i*32)
   draw_sprite(sBorder, 0, xRight2, i*32)
   }
-for (i=0; i&lt;12; i++) {
+for (var i=0; i&lt;12; i++) {
   draw_sprite(sBorder, 0, xLeft1 + i*32, 640)
   draw_sprite(sBorder, 0, xLeft2 + i*32, 640)
   }
@@ -370,45 +383,58 @@ for (var i=0; i&lt;4; i++)
 //draw next figure
 if nextFig != ""
   switch nextFig {
-    case "I": draw_sprite_ext(sprite1,0,183,90,1,1,0,c_white,1); break
-    case "S": draw_sprite_ext(sprite1,1,183,90,1,1,0,make_color_hsv(42+clmod,255,255),1); break
-    case "Z": draw_sprite_ext(sprite1,2,183,90,1,1,0,make_color_hsv(213+clmod,255,255),1); break
-    case "O": draw_sprite_ext(sprite1,3,183,90,1,1,0,make_color_hsv(128+clmod,255,255),1); break
-    case "T": draw_sprite_ext(sprite1,4,183,90,1,1,0,make_color_hsv(clmod, 255,255),1); break
-    case "L": draw_sprite_ext(sprite1,5,183,90,1,1,0,make_color_hsv(85+clmod, 255,255),1); break
-    case "J": draw_sprite_ext(sprite1,6,183,90,1,1,0,make_color_hsv(170+clmod,255,255),1); break
+    case "I": draw_sprite_ext(sprite1,0,183,85,1,1,0,c_white,1); break
+    case "S": draw_sprite_ext(sprite1,1,183,85,1,1,0,make_color_hsv(42+clmod,255,255),1); break
+    case "Z": draw_sprite_ext(sprite1,2,183,85,1,1,0,make_color_hsv(213+clmod,255,255),1); break
+    case "O": draw_sprite_ext(sprite1,3,183,85,1,1,0,make_color_hsv(128+clmod,255,255),1); break
+    case "T": draw_sprite_ext(sprite1,4,183,85,1,1,0,make_color_hsv(clmod, 255,255),1); break
+    case "L": draw_sprite_ext(sprite1,5,183,85,1,1,0,make_color_hsv(85+clmod, 255,255),1); break
+    case "J": draw_sprite_ext(sprite1,6,183,85,1,1,0,make_color_hsv(170+clmod,255,255),1); break
     }  
 
-//GUI
+// Stats
 draw_set_font(fTetris)
 draw_set_color(c_white)
 draw_set_halign(fa_right)
 draw_set_valign(fa_top)
 draw_set_alpha(1)
 var xx = xLeft1 - 16
-draw_text(xx, 16, "NEXT:")
-draw_text(xx, 150, "SCORE:#"+string(pp))
-draw_text(xx, 270, "LINES:#"+string(lines))
-draw_text(xx, 350, "LEVEL:#"+string(level))
-draw_text(xx, 520, "DRY/MAX:#"+string(dry)+" / "+string(maxdry))
-draw_text(xx, 600, "TTR:#"+string(ttrpercent))
-draw_text_transformed(xx,700,"SEED "+global.seed,0.4,0.4,0)
-draw_text_transformed(xx,680,"FIG "+string(sequencePosition),0.4,0.4,0)
+draw_text(xx, 10, "NEXT:")
+draw_text(xx, 125, "SCORE:#"+string(pp))
+draw_text(xx, 255, "LINES:#"+string(lines))
+draw_text(xx, 330, "LEVEL:#"+string(level))
+draw_text(xx, 445, "DRY/MAX:#"+string(dry)+" / "+string(maxdry))
+draw_text(xx, 525, "TTR:#"+string(ttrpercent))
+draw_text_transformed(xx,702,"SEED "+global.seed,0.4,0.4,0)
+draw_text_transformed(xx,682,"FIG "+string(sequencePosition),0.4,0.4,0)
 
+if (scoresRecieved) {
+  draw_text_transformed(xx,635, "Best score: " + string(pbScore), 0.4,0.4, 0)
+  draw_text_transformed(xx,655, "Best lines: " + string(pbLines), 0.4,0.4, 0)
+  draw_set_halign(fa_left)
+  draw_text_transformed(xRight2+48,635, "Best score: " + string(wrScore), 0.4,0.4, 0)
+  draw_text_transformed(xRight2+48,655, "Best lines: " + string(wrLines), 0.4,0.4, 0)
+}
+
+draw_set_halign(fa_center)
 if gameover {
   draw_set_alpha((0.5-gameoverAlpha)*4)
-  draw_set_halign(fa_center)
-  draw_text(448,200,"Game over")
+  draw_text(448,150,"Game over")
   if adapter == -1 || adapter.gameover
-    draw_text(448,280,"Press Space#to restart")
+    draw_text(448,225,"Press Space#to restart")
   else
-    draw_text(448,280,"Wait for player#" + global.plright)
+    draw_text(448,225,"Wait for player#" + global.plright)
+  if !scoresSent
+    draw_text_transformed(448,330,"Press Enter#to send score",0.8,0.8,0)
   if memestring != "" {
-    draw_text_transformed(448,420, "Don't be bored,#have hello from WordLadder",0.6,0.6,0)
+    draw_text_transformed(448,440, "Don't be bored,#have hello from WordLadder",0.6,0.6,0)
     draw_set_color(irandom(c_white))
     draw_text_transformed(448,500,memestring,0.6,0.6,0)
-    }
   }
+} else if escTimer &gt; 0 {
+  draw_set_alpha(escTimer / 80)
+  draw_text_transformed(448,200, "Press Esc to quit",0.6,0.6,0)
+}
 </string>
           </argument>
         </arguments>

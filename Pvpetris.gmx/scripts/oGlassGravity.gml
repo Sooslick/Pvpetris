@@ -30,7 +30,7 @@ if free {
   }
 else if !usedSpareDelay {
   usedSpareDelay = true
-  delay = 50
+  delay = 40
   }
 else {
   // Trigger gameover if at least one square remains out of playzone
@@ -50,9 +50,12 @@ else {
   burnList = 0
   for (var i=0; i<4; i++) {
     var add = true
+    var tempH = fh[i] + currH
+    if tempH < 0
+      continue
     // ignore row if already marked
     for (var j=0; j<burn; j++) {
-      if fh[i]+currH == burnList[j] {
+      if tempH == burnList[j] {
         add = false
         break
         }
@@ -60,12 +63,12 @@ else {
     if add {
       var rowFilled = true
       for (var j=0; j<10; j++)
-        if arr[fh[i]+currH,j] == 0 {    //todo bugfix (UPD 04.2023 what bug?)
+        if arr[tempH, j] == 0 {
           rowFilled = false
           break
           }
       if rowFilled {
-        burnList[burn] = fh[i]+currH
+        burnList[burn] = tempH
         burn++
         }
       }

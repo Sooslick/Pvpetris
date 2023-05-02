@@ -25,6 +25,7 @@ ts = current_time
 switch currFig {
   case "I":
     dry = 0
+    currH = 0
     currClr = c_white
       fh[0] = 2 -2
       fx[0] = 0 -2

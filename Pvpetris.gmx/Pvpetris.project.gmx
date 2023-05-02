@@ -15,21 +15,20 @@
   <backgrounds name="background"/>
   <paths name="paths"/>
   <scripts name="scripts">
-    <script>scripts\oGlassShift.gml</script>
-    <script>scripts\oGlassRot.gml</script>
+    <script>scripts\envGetNickname.gml</script>
+    <script>scripts\oAdapterInit.gml</script>
+    <script>scripts\oAdapterSynchRecv.gml</script>
+    <script>scripts\oAdapterSynchReq.gml</script>
+    <script>scripts\oGlassGameover.gml</script>
     <script>scripts\oGlassGravity.gml</script>
     <script>scripts\oGlassNext.gml</script>
-    <script>scripts\oAdapterInit.gml</script>
+    <script>scripts\oGlassRot.gml</script>
+    <script>scripts\oGlassShift.gml</script>
     <script>scripts\oRestSendScore.gml</script>
-    <script>scripts\oAdapterSynchReq.gml</script>
-    <script>scripts\oAdapterSynchRecv.gml</script>
-    <script>scripts\envGetNickname.gml</script>
-    <script>scripts\recalcStrings.gml</script>
     <script>scripts\recalcBoundings.gml</script>
-    <script>scripts\oGlassGameover.gml</script>
+    <script>scripts\recalcStrings.gml</script>
   </scripts>
   <fonts name="fonts">
-    <font>fonts\font0</font>
     <font>fonts\fTetris</font>
   </fonts>
   <objects name="objects">
@@ -46,9 +45,9 @@
   <constants number="7">
     <constant name="hashPrivate">"${private}"</constant>
     <constant name="domain">"${targetHost}"</constant>
-    <constant name="restScore">"rest/sendScore.php"</constant>
-    <constant name="restSplash">"rest/getSplash.php"</constant>
-    <constant name="restGet">"rest/getMyBest.php"</constant>
+    <constant name="restScore">"/rest/sendScore.php"</constant>
+    <constant name="restSplash">"/rest/getSplash.php"</constant>
+    <constant name="restGet">"/rest/getMyBest.php"</constant>
     <constant name="version">"PvPetris v${version}# © Sooslick Art Project"</constant>
     <constant name="vlong">${vlong}</constant>
   </constants>

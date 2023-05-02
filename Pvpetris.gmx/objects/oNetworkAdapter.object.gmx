@@ -65,6 +65,7 @@ tetrisanim = false
 
 gameover = false
 gameoverAlpha = 1
+scoresRecieved = false
 </string>
           </argument>
         </arguments>
@@ -345,39 +346,43 @@ for (var i=0; i&lt;4; i++)
 //draw next figure
 if nextFig != ""
   switch nextFig {
-    case "I": draw_sprite_ext(sprite1,0,1097,90,1,1,0,c_white,1); break
-    case "S": draw_sprite_ext(sprite1,1,1097,90,1,1,0,make_color_hsv(42+clmod,255,255),1); break
-    case "Z": draw_sprite_ext(sprite1,2,1097,90,1,1,0,make_color_hsv(213+clmod,255,255),1); break
-    case "O": draw_sprite_ext(sprite1,3,1097,90,1,1,0,make_color_hsv(128+clmod,255,255),1); break
-    case "T": draw_sprite_ext(sprite1,4,1097,90,1,1,0,make_color_hsv(clmod, 255,255),1); break
-    case "L": draw_sprite_ext(sprite1,5,1097,90,1,1,0,make_color_hsv(85+clmod, 255,255),1); break
-    case "J": draw_sprite_ext(sprite1,6,1097,90,1,1,0,make_color_hsv(170+clmod,255,255),1); break
+    case "I": draw_sprite_ext(sprite1,0,1097,85,1,1,0,c_white,1); break
+    case "S": draw_sprite_ext(sprite1,1,1097,85,1,1,0,make_color_hsv(42+clmod,255,255),1); break
+    case "Z": draw_sprite_ext(sprite1,2,1097,85,1,1,0,make_color_hsv(213+clmod,255,255),1); break
+    case "O": draw_sprite_ext(sprite1,3,1097,85,1,1,0,make_color_hsv(128+clmod,255,255),1); break
+    case "T": draw_sprite_ext(sprite1,4,1097,85,1,1,0,make_color_hsv(clmod, 255,255),1); break
+    case "L": draw_sprite_ext(sprite1,5,1097,85,1,1,0,make_color_hsv(85+clmod, 255,255),1); break
+    case "J": draw_sprite_ext(sprite1,6,1097,85,1,1,0,make_color_hsv(170+clmod,255,255),1); break
     }  
 
-//GUI
+// Opponent's stats
 draw_set_font(fTetris)
 draw_set_color(c_white)
 draw_set_halign(fa_left)
 draw_set_valign(fa_top)
 draw_set_alpha(1)
-draw_text(1040, 16, "NEXT:")
-draw_text(1040, 150, "SCORE:#"+string(pp))
-draw_text(1040, 270, "LINES:#"+string(lines))
-draw_text(1040, 350, "LEVEL:#"+string(level))
-draw_text(1040, 520, "DRY/MAX:#"+string(dry)+" / "+string(maxdry))
-draw_text(1040, 600, "TTR:#"+string(ttrpercent))
-draw_text_transformed(1040,680,"FIG "+string(sequencePosition),0.4,0.4,0)
+draw_text(1040, 10, "NEXT:")
+draw_text(1040, 125, "SCORE:#"+string(pp))
+draw_text(1040, 255, "LINES:#"+string(lines))
+draw_text(1040, 330, "LEVEL:#"+string(level))
+draw_text(1040, 445, "DRY/MAX:#"+string(dry)+" / "+string(maxdry))
+draw_text(1040, 525, "TTR:#"+string(ttrpercent))
+draw_text_transformed(1040,682,"FIG "+string(sequencePosition),0.4,0.4,0)
 
+// Score differences
 draw_set_color(clright)
-draw_text(1040,220, string(diffright))
+draw_text(1040,200, string(diffright))
 draw_set_halign(fa_right)
 draw_set_color(clleft)
-draw_text(240,220, string(diffleft))
+draw_text(240,200, string(diffleft))
 
-draw_set_halign(fa_center)
+// Names
 draw_set_color(c_white)
-draw_text(440,684,global.plleft)
-draw_text(840,684,global.plright)
+draw_text(600,675,global.plleft)
+draw_set_halign(fa_left)
+draw_text(680,675,global.plright)
+draw_set_halign(fa_center)
+draw_text_transformed(640,685, "VS", 0.6,0.6, 0)
 </string>
           </argument>
         </arguments>

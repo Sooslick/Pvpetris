@@ -30,14 +30,9 @@ if ($ok) {
 
 //insert score
 if ($ok) {
-  $request = "
-	SELECT l.MYSCORE, l.MYBURN, g.MAXSCORE, g.MAXBURN FROM 
-	(SELECT NAME, 1 HOOK, MAX(SCORE) MYSCORE, MAX(BURN) MYBURN FROM PVPETRIS GROUP BY NAME) l 
-	LEFT JOIN (SELECT 1 HOOK, MAX(SCORE) MAXSCORE, MAX(BURN) MAXBURN FROM PVPETRIS) g 
-	ON (l.HOOK = g.HOOK) 
-	WHERE l.NAME = '$name'";
   try {
-    $q = $pdo->query($request);
+    $myQ = $pdo->query("SELECT MAX(SCORE) MYSCORE, MAX(BURN) MYBURN FROM PVPETRIS WHERE NAME = '$name'");
+    $wrQ = $pdo->query("SELECT MAX(SCORE) MAXSCORE, MAX(BURN) MAXBURN FROM PVPETRIS");
   } catch (PDOException $e) {
     $ok = false;
     $err_string = 'Database read error.';
@@ -50,11 +45,14 @@ if ($ok) {
 	$maxlines = 0;
 	$myscore = 0;
 	$mylines = 0;
-	if ($row = $q -> fetch()) {
-		$maxscore = $row['MAXSCORE'];
-		$maxlines = $row['MAXBURN'];
+	$row = $myQ -> fetch();
+	if (!empty($row['MYSCORE'])) {
 		$myscore = $row['MYSCORE'];
 		$mylines = $row['MYBURN'];
+	}
+	if ($row = $wrQ -> fetch()) {
+		$maxscore = $row['MAXSCORE'];
+		$maxlines = $row['MAXBURN'];
 	}
 	echo "$myscore,$mylines,$maxscore,$maxlines";
 	file_put_contents("${backendLocation}/$logFname", PHP_EOL . date('d.m.y H:i:s') . ' PvPetris getScore by ' . $name, FILE_APPEND);

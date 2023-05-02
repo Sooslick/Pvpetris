@@ -6,6 +6,7 @@ ini_set('display_errors', 1);
 //check _GET parameters
 $ok = true;
 $err_string = '';
+$name = '';
 if (isset($_GET['name'])) {$name = $_GET['name'];} else {$ok = false; $err_string .= "No name passed. ";}
 if (isset($_GET['score'])) {$score = $_GET['score'];} else {$ok = false; $err_string .= "No score passed. ";}
 if (isset($_GET['burn'])) {$burn = $_GET['burn'];} else {$ok = false; $err_string .= "No lines passed. ";}
