@@ -42,6 +42,7 @@ port = "27015"
 enabled = false
 connected = false
 connectTimeout = 0
+timeoutErrorTicks = 0
 client_name = ""
 clientConnected = false
 vError = false
@@ -293,6 +294,7 @@ else if keyboard_check(vk_control) &amp;&amp; keyboard_check_pressed(ord("V")) {
   
 //mouse click: map clicked area, then procced as enter click
 else if mouse_check_button_pressed(mb_left) {
+  var oldSelected = selected
   if point_in_rectangle(mouse_x, mouse_y, 0,0,640,100) {
     selected = 0
     keyboard_key_press(vk_enter)
@@ -321,7 +323,8 @@ else if mouse_check_button_pressed(mb_left) {
     }
   else if point_in_rectangle(mouse_x, mouse_y, 640,360,1280,440)
     if menuCli { selected = 6; keyboard_key_press(vk_enter); }
-  hovered = selected
+  if oldSelected != selected
+    hovered = selected
   recalcBoundings(self)
   }  
   
@@ -366,10 +369,12 @@ keyboard_lastchar = ''
 //timer
 connectTimeout--
 if (connectTimeout == 0 &amp;&amp; !connected) {
+  timeoutErrorTicks = 100
   network_destroy(global.client)
   global.client = -1
-  show_debug_message("destroyed client")
-}
+  show_debug_message("destroyed client (connection timeout)")
+} else if (timeoutErrorTicks &gt; 0)
+  timeoutErrorTicks--
 
 //mouse cursor
 if (mouse_x + mouse_y != mousePos) {
@@ -532,7 +537,8 @@ draw_text_transformed(0,720,version,0.4,0.4,0)
 draw_text_transformed(0,675,'Game controls:
 Z/X - rotate
 Left/right - shift
-Down - drop
+Up - instant drop
+Down - soft drop
 Space - restart game
 Esc - quit to menu
 __________________', 0.4, 0.4, 0)
@@ -608,7 +614,10 @@ if connectTimeout &gt; 0 &amp;&amp; !connected {
   draw_sprite_ext(sprite1,0,1060,400,0.5,0.5,connectTimeout*16,c_white,1)
   }
 
-if vError 
+if timeoutErrorTicks &gt; 0 {
+  draw_set_alpha(timeoutErrorTicks / 100)
+  draw_text(789,550, "Connection timeout")
+} else if vError 
   draw_text(789,550, "Client outdated")
 </string>
           </argument>

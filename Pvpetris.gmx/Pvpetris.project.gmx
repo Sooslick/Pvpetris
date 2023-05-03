@@ -19,6 +19,7 @@
     <script>scripts\oAdapterInit.gml</script>
     <script>scripts\oAdapterSynchRecv.gml</script>
     <script>scripts\oAdapterSynchReq.gml</script>
+    <script>scripts\oGlassDrop.gml</script>
     <script>scripts\oGlassGameover.gml</script>
     <script>scripts\oGlassGravity.gml</script>
     <script>scripts\oGlassNext.gml</script>
