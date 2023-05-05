@@ -437,13 +437,10 @@ if type = network_type_data {
   switch header {
     case 0:     //init data packet from client
       client_name = buffer_read(msg_buff, buffer_string)
-      var size = buffer_get_size(msg_buff)
-      var vl = 0
-      if size &gt;= string_length(client_name) + 6
-        vl = buffer_read(msg_buff, buffer_u32)
+      var vl = buffer_read(msg_buff, buffer_u32)
       buffer_seek(global.buffer, buffer_seek_start, 0);
       // checking version descriptor
-      if vl != vlong {
+      if vl == vlong {
         buffer_write(global.buffer, buffer_s8, 1)
         buffer_write(global.buffer, buffer_string, nickname)
         }

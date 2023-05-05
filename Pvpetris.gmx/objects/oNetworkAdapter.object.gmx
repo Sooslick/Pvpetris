@@ -249,22 +249,25 @@ if type = network_type_data {
       burn = 0
       burnList = 0
       for (var i=0; i&lt;4; i++) {
+        var tempH = fh[i]+currH
+        if tempH &lt; 0
+          continue
         var add = true
         for (var j=0; j&lt;burn; j++) {
-          if fh[i]+currH == burnList[j] {
+          if tempH == burnList[j] {
             add = false
             break
             }
           }
         if add {
-          var verify = true
+          var rowFilled = true
           for (var j=0; j&lt;10; j++)
-            if arr[fh[i]+currH,j] == 0 {
-              verify = false
+            if arr[tempH,j] == 0 {
+              rowFilled = false
               break
               }
-          if verify {
-            burnList[burn] = fh[i]+currH
+          if rowFilled {
+            burnList[burn] = tempH
             burn++
             }
           }
