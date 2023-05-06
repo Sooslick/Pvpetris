@@ -169,7 +169,7 @@ else if keyboard_check_released(vk_escape) || gamepad_button_check_released(0, g
     if (global.client != -1) network_destroy(global.client)
     game_restart()
   } else
-    escTimer = 80
+    escTimer = 240
 }
 
 else if keyboard_check_released(vk_enter) {
@@ -184,7 +184,7 @@ if (escTimer &gt; 0)
 if gameover {
   if gameoverAlpha &gt; 0.25
     gameoverAlpha-= 0.005
-  if memetimer++ == 2500
+  if memetimer++ == 10000
     http_get(domain + restSplash)
   exit
   }
@@ -243,7 +243,7 @@ if shiftDirection != 0 {
   keydelay-= (current_time - ts)
   if keydelay &lt;= 0
     if oGlassShift(shiftDirection)
-      keydelay = 80
+      keydelay = 100
   }
 if keyboard_check_released(vk_left) || keyboard_check_released(vk_right) ||
    gamepad_button_check_released(0, gp_padl) || gamepad_button_check_released(0, gp_padr)
@@ -353,7 +353,8 @@ draw_sprite_ext(jeff,1,832,0,1,1,0,c_white,0.1)
 
 //tetrisanim
 if tetrisanim {
-  draw_set_alpha(random(0.7))
+  var aa = sin(degtorad(current_time * 3)) * 0.3 + 0.7
+  draw_set_alpha(aa)
   draw_set_color(c_white)
   draw_rectangle(256,0,640,672,false)
   }

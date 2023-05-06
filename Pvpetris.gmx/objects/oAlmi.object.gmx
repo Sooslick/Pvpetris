@@ -29,10 +29,10 @@
 image_yscale = image_xscale
 image_angle = random(360)
 depth+= 1-image_xscale
-rotspeed = random_range(1,2.5)
+rotspeed = random_range(0.33,1)
 if random(1)&lt;0.5
   rotspeed*= -1
-fallspeed = image_xscale * 5.5
+fallspeed = image_xscale * 1.8
 image_index = irandom_range(0,6)
 image_speed = 0
 image_blend = irandom(c_white)

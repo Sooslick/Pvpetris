@@ -1,5 +1,8 @@
+if (lines == 0)
+  exit
+
 if (control != lines + ttrlines + pp + controlAdd)
-    exit
+  exit
 
 var nick = global.plleft
 var points = string(pp)

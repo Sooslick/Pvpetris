@@ -48,13 +48,12 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>tick++
-if tick &gt; 11 {
+            <string>if tick++ &gt; 30 {
   tick = 0
   var xx = irandom(240)
   instance_create(xx,-64,oAlmi)
   instance_create(1280-xx,-64,oAlmi)
-  }
+}
 </string>
           </argument>
         </arguments>
