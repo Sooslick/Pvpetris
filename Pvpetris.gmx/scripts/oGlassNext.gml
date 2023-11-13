@@ -16,7 +16,10 @@ if sequencePosition == sequenceLength-1 {
 //generate figure
 currRot = 0
 currX = 5
-currH = -1
+if period < 150
+    currH = -1
+else
+    currH = 0
 currFig = string_char_at(sequence, sequencePosition)
 nextFig = string_char_at(sequence, sequencePosition+1)
 delay = period

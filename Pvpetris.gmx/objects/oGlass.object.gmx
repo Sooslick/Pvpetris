@@ -386,13 +386,13 @@ for (var i=0; i&lt;4; i++)
 //draw next figure
 if nextFig != ""
   switch nextFig {
-    case "I": draw_sprite_ext(sprite1,0,183,85,1,1,0,c_white,1); break
-    case "S": draw_sprite_ext(sprite1,1,183,85,1,1,0,make_color_hsv(42+clmod,255,255),1); break
-    case "Z": draw_sprite_ext(sprite1,2,183,85,1,1,0,make_color_hsv(213+clmod,255,255),1); break
-    case "O": draw_sprite_ext(sprite1,3,183,85,1,1,0,make_color_hsv(128+clmod,255,255),1); break
-    case "T": draw_sprite_ext(sprite1,4,183,85,1,1,0,make_color_hsv(clmod, 255,255),1); break
-    case "L": draw_sprite_ext(sprite1,5,183,85,1,1,0,make_color_hsv(85+clmod, 255,255),1); break
-    case "J": draw_sprite_ext(sprite1,6,183,85,1,1,0,make_color_hsv(170+clmod,255,255),1); break
+    case "I": draw_sprite_ext(almiParts,0,183,85,1,1,0,c_white,1); break
+    case "S": draw_sprite_ext(almiParts,1,183,85,1,1,0,make_color_hsv(42+clmod,255,255),1); break
+    case "Z": draw_sprite_ext(almiParts,2,183,85,1,1,0,make_color_hsv(213+clmod,255,255),1); break
+    case "O": draw_sprite_ext(almiParts,3,183,85,1,1,0,make_color_hsv(128+clmod,255,255),1); break
+    case "T": draw_sprite_ext(almiParts,4,183,85,1,1,0,make_color_hsv(clmod, 255,255),1); break
+    case "L": draw_sprite_ext(almiParts,5,183,85,1,1,0,make_color_hsv(85+clmod, 255,255),1); break
+    case "J": draw_sprite_ext(almiParts,6,183,85,1,1,0,make_color_hsv(170+clmod,255,255),1); break
     }  
 
 // Stats

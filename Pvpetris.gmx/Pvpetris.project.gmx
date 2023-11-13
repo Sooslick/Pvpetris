@@ -8,7 +8,7 @@
   <sprites name="sprites">
     <sprite>sprites\sTile</sprite>
     <sprite>sprites\sBorder</sprite>
-    <sprite>sprites\sprite1</sprite>
+    <sprite>sprites\almiParts</sprite>
     <sprite>sprites\jeff</sprite>
     <sprite>sprites\sMenuBg</sprite>
   </sprites>

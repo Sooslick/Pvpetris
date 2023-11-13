@@ -4,13 +4,13 @@ PvPetris is a regular Tetris game based on classic NES version.
 We developed it being inspired by [Classic Tetris World Championship](https://thectwc.com/) 
 and the main feature of this game is multiplayer: play PvPetris with friend in real time!
 
-[Download page](https://pvpetris.myhmd.ru/)
+[Download page](https://sooslick.art/pvpetris/)
 
 ### Prerequisites
 
 1. Game Maker: Studio v1.4.9999 (GM:S is outdated however)
 2. Any web server (Nginx works fine for me)
-3. MySQL Database
+3. MySQL Database (other databases probably fine too but not tested)
 4. PHP 5
 
 ### Building from source code
