@@ -124,6 +124,7 @@ for (var i=0; i<4; i++) {
   }
   
 softdrop = false
+fixed = false
 
 if adapter != -1 {
   if firstFigureTrigger {

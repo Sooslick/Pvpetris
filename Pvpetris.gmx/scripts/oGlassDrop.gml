@@ -14,6 +14,7 @@ for (var i=0; i<4; i++) {
 }
 dropped+= jumpFinal
 currH+= jumpFinal
+fixed = true
 if adapter != -1 {
   buffer_seek(global.buffer, buffer_seek_start, 0);
   buffer_write(global.buffer, buffer_s8, 12)

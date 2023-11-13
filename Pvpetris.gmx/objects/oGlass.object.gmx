@@ -86,6 +86,7 @@ burn = 0
 burnList = 0;
   
 dropped = 0                 //score by softdrop
+fixed = false
 softdrop = false
 lineanim = false
 tetrisanim = false
@@ -234,34 +235,36 @@ if delay &lt; 0 {
     oGlassGravity()
   }
 
-var shiftDirection = 0
-if keyboard_check(vk_left) || gamepad_button_check(0,gp_padl) 
-  shiftDirection = -1
-else if keyboard_check(vk_right) || gamepad_button_check(0,gp_padr)
-  shiftDirection = 1
-if shiftDirection != 0 {
-  keydelay-= (current_time - ts)
-  if keydelay &lt;= 0
-    if oGlassShift(shiftDirection)
-      keydelay = 100
+if !fixed {
+  var shiftDirection = 0
+  if keyboard_check(vk_left) || gamepad_button_check(0,gp_padl) 
+    shiftDirection = -1
+  else if keyboard_check(vk_right) || gamepad_button_check(0,gp_padr)
+    shiftDirection = 1
+  if shiftDirection != 0 {
+    keydelay-= (current_time - ts)
+    if keydelay &lt;= 0
+      if oGlassShift(shiftDirection)
+        keydelay = 100
   }
-if keyboard_check_released(vk_left) || keyboard_check_released(vk_right) ||
-   gamepad_button_check_released(0, gp_padl) || gamepad_button_check_released(0, gp_padr)
-  keydelay = 0
+  if keyboard_check_released(vk_left) || keyboard_check_released(vk_right) ||
+     gamepad_button_check_released(0, gp_padl) || gamepad_button_check_released(0, gp_padr)
+    keydelay = 0
 
-if keyboard_check_pressed(ord("Z")) || gamepad_button_check_pressed(0,gp_face3)
-  oGlassRot(-1)
-else if keyboard_check_pressed(ord("X")) || gamepad_button_check_pressed(0,gp_face2)
-  oGlassRot(1)
+  if keyboard_check_pressed(ord("Z")) || gamepad_button_check_pressed(0,gp_face3)
+    oGlassRot(-1)
+  else if keyboard_check_pressed(ord("X")) || gamepad_button_check_pressed(0,gp_face2)
+    oGlassRot(1)
 
-if keyboard_check_pressed(vk_up) || gamepad_button_check_pressed(0,gp_padu)
-  oGlassDrop()
-if keyboard_check_pressed(vk_down) || gamepad_button_check_pressed(0,gp_padd) {
-  softdrop = true
-  delay = 0
+  if keyboard_check_pressed(vk_up) || gamepad_button_check_pressed(0,gp_padu)
+    oGlassDrop()
+  if keyboard_check_pressed(vk_down) || gamepad_button_check_pressed(0,gp_padd) {
+    softdrop = true
+    delay = 0
   }
-if keyboard_check_released(vk_down) || gamepad_button_check_released(0, gp_padd)
-  softdrop = false
+  if keyboard_check_released(vk_down) || gamepad_button_check_released(0, gp_padd)
+    softdrop = false
+}
 
 ts = current_time
 </string>
