@@ -1,5 +1,5 @@
 <?php
-$fname = "${backendLocation}/SPLASH.TXT";
+$fname = "/home/sooslick/Pvpetris/target/PvPetris_backend/SPLASH.TXT";
 $final = "YOURE FAILED";
 if (file_exists($fname)) {
   $content = file_get_contents($fname);
@@ -16,5 +16,5 @@ echo($final);
 
 $ini = parse_ini_file("${backendLocation}/config.ini");
 $logFname = $ini['logFileName'];
-file_put_contents("${backendLocation}/$logFname", PHP_EOL . date('d.m.y H:i:s') . ' getSplash request', FILE_APPEND);
+file_put_contents("${backendLocation}/$logFname", PHP_EOL . date('d.m.y H:i:s') . ' [' . $_SERVER['REMOTE_ADDR'] . '] getSplash request', FILE_APPEND);
 ?>
